@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codepath.apps.twitterappclient.activities.TweetActivity">
+
+    <ImageView
+        android:id="@+id/ivUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:minHeight="45dp"
+        android:minWidth="45dp"
+        android:src="@drawable/ic_person_black_48dp"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@+id/ivUser"
+        android:layout_toRightOf="@+id/ivUser"
+        android:text="New Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black"
+        tools:text="Rafael" />
+
+    <TextView
+        android:id="@+id/tvScreenName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvName"
+        android:layout_toEndOf="@+id/ivUser"
+        android:layout_toRightOf="@+id/ivUser"
+        android:text="New Text"
+        android:textColor="@color/gray_1"
+        tools:text="camargo1985" />
+
+    <EditText
+        android:id="@+id/etTweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/ivUser"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/whats_happening"
+        android:inputType="textMultiLine"
+        android:maxLength="140"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColorHint="@color/gray_1" />
+
+    <TextView
+        android:id="@+id/tvCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/etTweet"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/etTweet"
+        android:text="@string/count"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/gray_1" />
+
+</RelativeLayout>
