@@ -11,18 +11,18 @@ import org.json.JSONObject;
 
 public class UserTimelineFragment extends TweetsListFragment {
 
-    public static final String SCREEN_NAME = "screen_name";
+    public static final String SCREEN_NAME_EXTRA = "screen_name_extra";
 
     public static UserTimelineFragment newInstance(String screenName) {
         UserTimelineFragment userTimelineFragment = new UserTimelineFragment();
         Bundle args = new Bundle();
-        args.putString(SCREEN_NAME, screenName);
+        args.putString(SCREEN_NAME_EXTRA, screenName);
         userTimelineFragment.setArguments(args);
         return userTimelineFragment;
     }
 
     protected void populateTimeline(long sinceId, long maxId) {
-        String screenName = getArguments().getString(SCREEN_NAME);
+        String screenName = getArguments().getString(SCREEN_NAME_EXTRA);
 
         twitterClient.getUserTimeline(screenName, sinceId, maxId, new JsonHttpResponseHandler() {
             @Override

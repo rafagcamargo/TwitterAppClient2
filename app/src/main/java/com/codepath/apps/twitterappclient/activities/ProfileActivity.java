@@ -15,12 +15,12 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    public static final String USER_EXTRA = "user_extra";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        User user = new Select().from(User.class).executeSingle();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
@@ -32,21 +32,21 @@ public class ProfileActivity extends AppCompatActivity {
             getSupportActionBar().setLogo(R.drawable.ic_twitter);
         }
 
-        if (user != null) {
-            populateProfileHeader(user);
+        User user = getIntent().getParcelableExtra(USER_EXTRA);
+
+        if (user == null) {
+            user = new Select().from(User.class).executeSingle();
         }
 
-        String screenName = getIntent().getStringExtra("screen_name");
+        populateProfileHeader(user);
 
         if (savedInstanceState == null) {
-            UserTimelineFragment userTimelineFragment = UserTimelineFragment.newInstance(screenName);
+            UserTimelineFragment userTimelineFragment = UserTimelineFragment.newInstance(user.getScreenName());
 
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.flContainer, userTimelineFragment);
             fragmentTransaction.commit();
         }
-
-
     }
 
     private void populateProfileHeader(User user) {

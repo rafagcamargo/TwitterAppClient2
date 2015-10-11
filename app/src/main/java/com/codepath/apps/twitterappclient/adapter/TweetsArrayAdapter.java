@@ -25,6 +25,8 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     private final Context context;
     private ArrayList<Tweet> tweets;
 
+    private OnImageProfileClickListener imageProfileClickListener;
+
     public TweetsArrayAdapter(Context context, ArrayList<Tweet> tweets) {
         this.context = context;
         this.tweets = tweets;
@@ -81,6 +83,10 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         TreeSet<Tweet> tweetTreeSet = new TreeSet<>(this.tweets);
         tweetTreeSet.addAll(tweets);
         updateList(new ArrayList<>(tweetTreeSet));
+    }
+
+    public Tweet getItem(int position) {
+        return tweets.get(position);
     }
 
     private String formatCreatedTime(String createdTime) {
@@ -145,7 +151,15 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         return new String(chs, 0, count);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public interface OnImageProfileClickListener {
+        void onImageProfileClick(View itemView, int position);
+    }
+
+    public void setImageProfileClickListener(OnImageProfileClickListener imageProfileClickListener) {
+        this.imageProfileClickListener = imageProfileClickListener;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivProfile;
         public TextView tvScreenName;
         public TextView tvName;
@@ -160,6 +174,15 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             tvText = (TextView) itemView.findViewById(R.id.tvText);
             tvCreatedAt = (TextView) itemView.findViewById(R.id.tvCreatedAt);
+
+            ivProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (imageProfileClickListener != null) {
+                        imageProfileClickListener.onImageProfileClick(ivProfile, getLayoutPosition());
+                    }
+                }
+            });
         }
     }
 }

@@ -23,10 +23,10 @@ public abstract class TweetsListFragment extends Fragment {
 
     private static final String TAG = TweetsListFragment.class.getSimpleName();
 
-    private TweetsArrayAdapter tweetsArrayAdapter;
     private Tweets tweets;
 
     protected TwitterClient twitterClient;
+    protected TweetsArrayAdapter tweetsArrayAdapter;
 
     @Nullable
     @Override
@@ -70,6 +70,12 @@ public abstract class TweetsListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         populateTimeline(tweets.getGreatestId(), 0);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        tweetsArrayAdapter.setImageProfileClickListener(null);
     }
 
     public void addAll(Tweets tweets) {
