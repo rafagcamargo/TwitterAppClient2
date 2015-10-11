@@ -1,48 +1,47 @@
 package com.codepath.apps.twitterappclient.activities;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.twitterappclient.R;
-import com.codepath.apps.twitterappclient.adapter.TweetsArrayAdapter;
+import com.codepath.apps.twitterappclient.adapter.TweetsPageAdapter;
 import com.codepath.apps.twitterappclient.application.TwitterApplication;
-import com.codepath.apps.twitterappclient.decorator.DividerItemDecoration;
-import com.codepath.apps.twitterappclient.listener.EndlessRecyclerOnScrollListener;
-import com.codepath.apps.twitterappclient.models.Tweet;
 import com.codepath.apps.twitterappclient.models.User;
-import com.codepath.apps.twitterappclient.restclient.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    private static final String TAG = TimelineActivity.class.getSimpleName();
-
-    private TwitterClient twitterClient;
-
-    private RecyclerView rvTweets;
-    private ArrayList<Tweet> tweets;
-    private TweetsArrayAdapter tweetsArrayAdapter;
-    private LinearLayoutManager linearLayoutManager;
+    private TextView textViewTab1;
+    private TextView textViewTab2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        twitterClient = TwitterApplication.getRestClient();
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(new TweetsPageAdapter(this, getSupportFragmentManager()));
+
+        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        pagerSlidingTabStrip.setViewPager(viewPager);
+        pagerSlidingTabStrip.setOnPageChangeListener(onPageChangeListener());
+
+        LinearLayout view = (LinearLayout) pagerSlidingTabStrip.getChildAt(0);
+        textViewTab1 = (TextView) view.getChildAt(0);
+        textViewTab1.setTypeface(Typeface.DEFAULT_BOLD);
+        textViewTab2 = (TextView) view.getChildAt(1);
+        textViewTab2.setTypeface(Typeface.DEFAULT);
 
         getUserAuthenticated();
 
@@ -53,31 +52,6 @@ public class TimelineActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayUseLogoEnabled(true);
             getSupportActionBar().setLogo(R.drawable.ic_twitter);
         }
-
-        rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
-        linearLayoutManager = new LinearLayoutManager(this);
-        rvTweets.setLayoutManager(linearLayoutManager);
-        rvTweets.setHasFixedSize(true);
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST);
-        rvTweets.addItemDecoration(itemDecoration);
-        rvTweets.setItemAnimator(new DefaultItemAnimator());
-        rvTweets.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int currentPage) {
-                Log.d(TimelineActivity.TAG, "onLoadMore(" + Tweet.lowestId + ")");
-                populateTimeline(1, Tweet.lowestId);
-            }
-        });
-        tweets = new ArrayList<>();
-        tweetsArrayAdapter = new TweetsArrayAdapter(this, tweets);
-        rvTweets.setAdapter(tweetsArrayAdapter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        populateTimeline(Tweet.greatestId, 0);
     }
 
     @Override
@@ -92,22 +66,13 @@ public class TimelineActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void populateTimeline(long sinceId, long maxId) {
-        twitterClient.getHomeTimeline(sinceId, maxId, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                tweetsArrayAdapter.addAll(Tweet.fromJsonArray(response));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-            }
-        });
+    public void onClickProfileView(MenuItem item) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
     }
 
     private void getUserAuthenticated() {
-        twitterClient.getCredentials(new JsonHttpResponseHandler() {
+        TwitterApplication.getRestClient().getCredentials(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 User user = User.fromJson(response);
@@ -119,5 +84,24 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+    }
+
+    private ViewPager.OnPageChangeListener onPageChangeListener() {
+        return new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                textViewTab1.setTypeface(position == 0 ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+                textViewTab2.setTypeface(position == 0 ? Typeface.DEFAULT : Typeface.DEFAULT_BOLD);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        };
     }
 }

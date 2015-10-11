@@ -44,6 +44,31 @@ public class TwitterClient extends OAuthBaseClient {
         client.get(apiUrl, params, handler);
     }
 
+    public void getMentionsTimeline(long sinceId, long maxId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+
+        RequestParams params = new RequestParams();
+        params.put("count", 25);
+        params.put("since_id", sinceId);
+        if (maxId > 0) {
+            params.put("max_id", maxId);
+        }
+        client.get(apiUrl, params, handler);
+    }
+
+    public void getUserTimeline(String screenName, long sinceId, long maxId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+
+        RequestParams params = new RequestParams();
+        params.put("count", 25);
+        //params.put("since_id", sinceId);
+        params.put("screen_name", screenName);
+//        if (maxId > 0) {
+//            params.put("max_id", maxId);
+//        }
+        client.get(apiUrl, params, handler);
+    }
+
     public void getCredentials(AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("account/verify_credentials.json");
 

@@ -40,10 +40,12 @@ public class TweetActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayUseLogoEnabled(true);
-            getSupportActionBar().setLogo(R.drawable.ic_twitter);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setLogo(R.drawable.ic_twitter);
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -77,7 +79,7 @@ public class TweetActivity extends AppCompatActivity {
         if (user != null) {
             Picasso.with(this)
                     .load(user.getProfileImageUrlOriginal())
-                    .placeholder(R.drawable.ic_person_black_48dp)
+                    .placeholder(R.drawable.ic_person_white_48dp)
                     .resize(140, 140)
                     .transform(new RoundedTransformation(5, 0))
                     .into(ivUser);

@@ -16,22 +16,18 @@ import com.codepath.apps.twitterappclient.models.Tweet;
 import com.codepath.apps.twitterappclient.ui.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Date;
 import java.util.TreeSet;
 
 public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.ViewHolder> {
 
     private final Context context;
     private ArrayList<Tweet> tweets;
-    private SimpleDateFormat simpleFormatter;
 
     public TweetsArrayAdapter(Context context, ArrayList<Tweet> tweets) {
         this.context = context;
         this.tweets = tweets;
-        this.simpleFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault());
     }
 
     @Override
@@ -46,17 +42,15 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     public void onBindViewHolder(TweetsArrayAdapter.ViewHolder holder, int position) {
         Tweet tweet = tweets.get(position);
 
+        Date date = tweet.getCreatedAtInDate();
         String createdTime = "";
-        try {
-            java.util.Date date = simpleFormatter.parse(tweet.getCreatedAt());
+        if (date != null) {
             createdTime = DateUtils.getRelativeTimeSpanString(date.getTime(),
                     System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_RELATIVE).toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
+                    DateUtils.FORMAT_ABBREV_ALL).toString();
         }
 
-        holder.ivProfile.setImageResource(0);
+        holder.ivProfile.setImageResource(R.drawable.ic_person_white_48dp);
         holder.tvScreenName.setText(context.getString(R.string.screen_name, tweet.getUser().getScreenName()));
         holder.tvName.setText(tweet.getUser().getName());
         holder.tvText.setText(tweet.getText());
@@ -67,7 +61,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
 
         Picasso.with(context)
                 .load(tweet.getUser().getProfileImageUrlOriginal())
-                .placeholder(R.drawable.ic_person_black_48dp)
+                .placeholder(R.drawable.ic_person_white_48dp)
                 .resize(140, 140)
                 .transform(new RoundedTransformation(5, 0))
                 .into(holder.ivProfile);
@@ -92,21 +86,45 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     private String formatCreatedTime(String createdTime) {
         if (createdTime.contains("ago")) {
             createdTime = createdTime.replace("ago", "");
+
+            if (createdTime.contains("days")) {
+                createdTime = createdTime.replace("days", "d");
+            }
+
+            if (createdTime.contains("secs") || createdTime.contains("sec")) {
+                createdTime = createdTime.replace("secs", "s");
+                createdTime = createdTime.replace("sec", "s");
+            }
+
+            if (createdTime.contains("mins") || createdTime.contains("min")) {
+                createdTime = createdTime.replace("mins", "m");
+                createdTime = createdTime.replace("min", "m");
+            }
+
+            if (createdTime.contains("hours") || createdTime.contains("hour")) {
+                createdTime = createdTime.replace("hours", "h");
+                createdTime = createdTime.replace("hour", "h");
+            }
+
+            return deleteWhitespace(createdTime);
         } else if (createdTime.contains("in")) {
             createdTime = createdTime.replace("in", "");
+            return deleteWhitespace(createdTime);
         }
 
         if (createdTime.contains("secs") || createdTime.contains("sec")) {
             createdTime = createdTime.replace("secs", "s");
             createdTime = createdTime.replace("sec", "s");
+            return deleteWhitespace(createdTime);
         }
 
         if (createdTime.contains("mins") || createdTime.contains("min")) {
             createdTime = createdTime.replace("mins", "m");
             createdTime = createdTime.replace("min", "m");
+            return deleteWhitespace(createdTime);
         }
 
-        return deleteWhitespace(createdTime);
+        return createdTime;
     }
 
     private String deleteWhitespace(final String str) {

@@ -15,12 +15,14 @@ import org.json.JSONObject;
 public class User extends Model implements Parcelable {
 
     private int utcOffset;
+    @Column(name = "FriendsCount")
     private int friendsCount;
     private String profileImageUrlHttps;
     private int listedCount;
     private String profileBackgroundImageUrl;
     private boolean defaultProfileImage;
     private int favouritesCount;
+    @Column(name = "Description")
     private String description;
     private String createdAt;
     private boolean isTranslator;
@@ -48,6 +50,7 @@ public class User extends Model implements Parcelable {
     private String profileBannerUrl;
     private int statusesCount;
     private boolean followRequestSent;
+    @Column(name = "FollowersCount")
     private int followersCount;
     private boolean profileUseBackgroundImage;
     private boolean defaultProfile;
@@ -62,12 +65,12 @@ public class User extends Model implements Parcelable {
         super();
     }
 
-    public User(String screenName, String profileImageUrl, String name) {
-        this();
-        this.screenName = screenName;
-        this.profileImageUrl = profileImageUrl;
-        this.name = name;
-    }
+//    public User(String screenName, String profileImageUrl, String name) {
+//        this();
+//        this.screenName = screenName;
+//        this.profileImageUrl = profileImageUrl;
+//        this.name = name;
+//    }
 
     public static User fromJson(JSONObject jsonObject) {
         User user = new User();
@@ -86,7 +89,7 @@ public class User extends Model implements Parcelable {
             user.listedCount = jsonObject.getInt("listed_count");
             user.createdAt = jsonObject.getString("created_at");
             user.favouritesCount = jsonObject.getInt("favourites_count");
-            user.utcOffset = jsonObject.getInt("utc_offset");
+            user.utcOffset = jsonObject.optInt("utc_offset");
             user.timeZone = jsonObject.getString("time_zone");
             user.geoEnabled = jsonObject.getBoolean("geo_enabled");
             user.verified = jsonObject.getBoolean("verified");

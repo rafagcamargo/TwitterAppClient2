@@ -2,21 +2,21 @@ package com.codepath.apps.twitterappclient.models;
 
 import android.support.annotation.NonNull;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Tweet implements Comparable<Tweet> {
-
-    public static long lowestId;
-    public static long greatestId = 1;
 
     private boolean possiblySensitiveAppealable;
     private String inReplyToStatusIdStr;
     private int inReplyToStatusId;
     private String createdAt;
+    private Date createdAtInDate;
     private String source;
     private int retweetCount;
     private boolean retweeted;
@@ -44,6 +44,7 @@ public class Tweet implements Comparable<Tweet> {
             tweet.inReplyToStatusIdStr = jsonObject.optString("in_reply_to_status_id_str");
             tweet.inReplyToStatusId = jsonObject.optInt("in_reply_to_status_id");
             tweet.createdAt = jsonObject.optString("created_at");
+            tweet.createdAtInDate = parse(tweet.createdAt);
             tweet.source = jsonObject.optString("source");
             tweet.retweetCount = jsonObject.getInt("retweet_count");
             tweet.retweeted = jsonObject.getBoolean("retweeted");
@@ -55,12 +56,6 @@ public class Tweet implements Comparable<Tweet> {
             tweet.inReplyToUserId = jsonObject.optInt("in_reply_to_user_id");
             tweet.favoriteCount = jsonObject.getInt("favorite_count");
             tweet.id = jsonObject.getLong("id");
-            if (lowestId == 0) {
-                lowestId = tweet.id;
-            }
-            if (greatestId == 1) {
-                greatestId = tweet.id;
-            }
             tweet.text = jsonObject.getString("text");
             tweet.place = jsonObject.optString("place");
             tweet.lang = jsonObject.getString("lang");
@@ -73,24 +68,6 @@ public class Tweet implements Comparable<Tweet> {
         }
 
         return tweet;
-    }
-
-    public static ArrayList<Tweet> fromJsonArray(JSONArray jsonArray) {
-        ArrayList<Tweet> tweets = new ArrayList<>(jsonArray.length());
-        for (int i = 0; i< jsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Tweet tweet = fromJson(jsonObject);
-                if (tweet != null) {
-                    tweets.add(tweet);
-                    lowestId = Math.min(lowestId, tweet.id);
-                    greatestId = Math.max(greatestId, tweet.id);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return tweets;
     }
 
     public boolean isPossiblySensitiveAppealable() {
@@ -107,6 +84,10 @@ public class Tweet implements Comparable<Tweet> {
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public Date getCreatedAtInDate() {
+        return createdAtInDate;
     }
 
     public String getSource() {
@@ -189,7 +170,6 @@ public class Tweet implements Comparable<Tweet> {
         Tweet tweet = (Tweet) o;
 
         return idStr.equals(tweet.idStr);
-
     }
 
     @Override
@@ -199,6 +179,16 @@ public class Tweet implements Comparable<Tweet> {
 
     @Override
     public int compareTo(@NonNull Tweet another) {
-        return another.idStr.compareTo(this.idStr);
+        return another.createdAtInDate.compareTo(this.createdAtInDate);
+    }
+
+    private static Date parse(String date) {
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.getDefault());
+        try {
+            return simpleFormatter.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
